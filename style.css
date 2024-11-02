@@ -11,6 +11,8 @@ p {
   padding-bottom: .2ex;
 }
 
+button, .message, textarea, input, img { border-radius: 4px;}
+
 button {
   font-size: .85em;
   background: #666;

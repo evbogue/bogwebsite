@@ -4,6 +4,7 @@ import { bogbot } from './bogbot.js'
 import { adder } from './adder.js'
 import { settings } from './settings.js'
 import { mykey } from './mykey.js'
+import { gossip } from './trystero.js'
 
 export const route = async (container) => {
   const screen = h('div', {id: 'screen'})
@@ -29,13 +30,14 @@ export const route = async (container) => {
     scroller.appendChild(settings)
   } 
 
-  if (src === '') {
-  }
-
   const query = await bogbot.query(src || mykey)
 
   if (query && query.length) {
     adder(query, src, scroller)
+  } else {
+    if (src.length === 44) {
+      await gossip(src)
+    } 
   } 
 
   window.onhashchange = function () {

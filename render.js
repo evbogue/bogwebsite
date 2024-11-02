@@ -4,8 +4,8 @@ import { avatar } from './avatar.js'
 import { bogbot } from './bogbot.js'
 import { markdown } from './markdown.js'
 import { composer } from './composer.js'
-import { extractYaml } from 'https://esm.sh/v135/@jsr/std__front-matter@1.0.5/mod.js'
-import { parse } from 'https://esm.sh/v135/@jsr/std__yaml@1.0.5/mod.js'
+import { parseYaml} from './yaml.js'
+import { gossip } from './trystero.js'
 
 const getThreads = async (m, replyDiv) => {
   const threads = await bogbot.query('?' + m.hash)
@@ -28,15 +28,16 @@ const populate = async (m, msgDiv) => {
 
   const blob = await bogbot.find(m.data)
   if (blob) {
-    try {    
-      const extract = await extractYaml(blob)
-      const front = await parse(extract.frontMatter)
-      pubkey = await avatar(m.author, front)    
-      content.innerHTML = await markdown(extract.body)
+    try {
+      const extracted = await parseYaml(blob) 
+      content.innerHTML = await markdown(extracted.body)
+      pubkey = await avatar(m.author, extracted)
     } catch (err) {
-      pubkey = await avatar(m.author)
-      content.innerHTML = await markdown(blob)
+      console.log(err)
     }
+  } else {
+    pubkey = await avatar(m.author)
+    await gossip(m.data, m.author)      
   }
 
   const previous = await bogbot.query(m.previous)
