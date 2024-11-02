@@ -18,19 +18,19 @@ export const gossip = async (hash, author) => {
     if (queue.has(hash)) {
       console.log('Asking for: ' + hash + 'in channel ' + author)
       speed++
-      if (author) {
-        const room = rooms.get(author)
-        if (room.sendHash) {
-          room.sendHash(hash)
-        }
-      } else {
+      //if (author) {
+      //  const room = rooms.get(author)
+      //  if (room && room.sendHash) {
+      //    room.sendHash(hash)
+      //  }
+      //} else {
         const values = [...rooms.values()]
         const room = values[Math.floor(Math.random() * values.length)]
         console.log(room)
         if (room.sendHash) {
           room.sendHash(hash)
         }
-      }
+      //}
       setTimeout(() => {
         ask()
       }, (1000 * speed)) 
