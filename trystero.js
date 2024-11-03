@@ -3,6 +3,7 @@ import { bogbot } from './bogbot.js'
 import { encode } from './lib/base64.js'
 import { render } from './render.js'
 import { markdown } from './markdown.js'
+import { parseYaml } from './yaml.js'
 
 export const rooms = new Map()
 
@@ -18,19 +19,19 @@ export const gossip = async (hash, author) => {
     if (queue.has(hash)) {
       console.log('Asking for: ' + hash + 'in channel ' + author)
       speed++
-      if (author) {
-        const room = rooms.get(author)
-        if (room.sendHash) {
-          room.sendHash(hash)
-        }
-      } else {
+      //if (author) {
+      //  const room = rooms.get(author)
+      //  if (room.sendHash) {
+      //    room.sendHash(hash)
+      //  }
+      //} else {
         const values = [...rooms.values()]
         const room = values[Math.floor(Math.random() * values.length)]
         console.log(room)
         if (room.sendHash) {
           room.sendHash(hash)
         }
-      }
+      //}
       setTimeout(() => {
         ask()
       }, (1000 * speed)) 
@@ -93,13 +94,19 @@ export const makeRoom = async (pubkey) => {
         ))
       )
       const q = await bogbot.query(hash)
-      bogbot.make(blob)
-      const got = document.getElementById(hash)
-      console.log(got.parentNode.id)
-      if (got) {
-        const mark = await markdown(blob)
-        got.innerHTML = mark        
-      }
+      await bogbot.make(blob)
+      try {
+        const got = document.getElementById('image:' + hash)
+        if (got) { got.src = blob}
+      } catch (err) {}
+      try {
+        const got = document.getElementById(hash)
+        try {
+          const obj = await parseYaml(blob)
+          const mark = await markdown(obj.body)
+          got.innerHTML = mark
+        } catch (err) {}
+      } catch (err) {}
       try {queue.delete(hash)} catch (err) {}
     } 
   })

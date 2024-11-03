@@ -1,7 +1,14 @@
+:root {
+  font-family: Inter, sans-serif;
+  font-feature-settings: 'liga' 1, 'calt' 1; /* fix for Chrome */
+}
+@supports (font-variation-settings: normal) {
+  :root { font-family: InterVariable, sans-serif; }
+}
+
 body {
   background: #444;
   color: #BEBEBE;
-  font-family: "Source Sans Pro", sans-serif;
 }
 
 p {
@@ -29,7 +36,7 @@ button:hover {
 
 textarea, input {
   font-size: 1em;
-  font-family: "Source Sans Pro", sans-serif;
+  font-family: Inter, sans-serif;
   border: none;
   margin-bottom: .5em;
   background: #666;
