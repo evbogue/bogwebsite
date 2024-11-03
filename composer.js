@@ -65,14 +65,6 @@ export const composer = async (msg) => {
     }
   }, ['Send'])
 
-  const img = vb(decode(pubkey), 256)
-  img.classList = 'avatar image' + pubkey
-  const blob = await bogbot.find(localStorage.getItem('image'))
-
-  if (blob) { img.src = blob}
-
-  const name = h('span', [await localStorage.getItem('name') || pubkey.substring(0, 7) + '...'])
-   
   const composeDiv = h('div', {id: 'reply:' + msg.hash, classList: 'message'}, [
     h('p', {style: 'float: right;'}, ['preview']),
     await avatar(pubkey),
