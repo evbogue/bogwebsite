@@ -21,7 +21,7 @@ export const gossip = async (hash, author) => {
       speed++
       //if (author) {
       //  const room = rooms.get(author)
-      //  if (room.sendHash) {
+      //  if (room && room.sendHash) {
       //    room.sendHash(hash)
       //  }
       //} else {
