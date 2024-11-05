@@ -116,8 +116,10 @@ export const makeRoom = async (pubkey) => {
   room.onPeerJoin(async (id) => {
     console.log(id + ' joined the room ' + pubkey)
     sendHash(await bogbot.pubkey(), id)
-    const latest = await bogbot.getLatest(await bogbot.pubkey())
-    sendBlob(latest.raw)
+    try {
+      const latest = await bogbot.getLatest(await bogbot.pubkey())
+      sendBlob(latest.raw)
+    } catch (err) {}
   })
   
   room.onPeerLeave(id => {

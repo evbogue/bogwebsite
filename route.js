@@ -10,7 +10,7 @@ const feedRender = async (query, src, scroller) => {
   if (query && query.length) {
     adder(query, src, scroller)
   } else {
-    if (src.length === 44) {
+    if (src && src.length === 44) {
       await gossip(src)
     }
   }
