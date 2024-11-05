@@ -6,6 +6,7 @@ import { avatar } from './avatar.js'
 import { render } from './render.js'
 import { vb } from './lib/vb.js'
 import { decode } from './lib/base64.js'
+import { blastBlob } from './trystero.js'
 
 const pubkey = await bogbot.pubkey()
 
@@ -14,19 +15,23 @@ export const composer = async (msg) => {
 
   const textarea = h('textarea', {placeholder: 'Write a message', style: 'width: 98%;'})
 
+  const draftId = 'draft:' + msg.hash
+  const draft = localStorage.getItem(draftId || '')
+
+  const preview = h('p', [draft])
+
   textarea.addEventListener('input', async () => {
-    if (textarea.value) { 
-      cachekv.put('draft:' + msg.hash, textarea.value) 
+    if (textarea.value) {
+      localStorage.setItem(draftId, textarea.value) 
     } else {
-      cachekv.rm('draft:' + msg.hash)
+      localStorage.removeItem(draftId)
     }
     preview.innerHTML = await markdown(textarea.value)
   })
 
-  const got = await cachekv.get('draft:' + msg.hash)
-  textarea.value = await cachekv.get('draft' + msg.hash) || ''
+  const got = localStorage.getItem(draftId + msg.hash)
+  textarea.value = draft
   
-  const preview = h('p', [await cachekv.get('draft' + msg.hash || '')])
 
   const button = h('button', {
     onclick: async () => {
@@ -52,7 +57,8 @@ export const composer = async (msg) => {
         localStorage.setItem('previous', opened.hash)
         const rendered = await render(opened)
         textarea.value = ''
-        cachekv.rm('draft:' + msg.hash)
+        blastBlob(opened.raw)
+        cachekv.rm(draftId)
         preview.textContent = ''
         if (msg && msg.hash != 'home') {
           if (composeDiv) {

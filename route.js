@@ -6,10 +6,19 @@ import { settings } from './settings.js'
 import { mykey } from './mykey.js'
 import { gossip } from './trystero.js'
 
+const feedRender = async (query, src, scroller) => {
+  if (query && query.length) {
+    adder(query, src, scroller)
+  } else {
+    if (src.length === 44) {
+      await gossip(src)
+    }
+  }
+}
+
 export const route = async (container) => {
   const screen = h('div', {id: 'screen'})
   const scroller = h('div', {id: 'scroller'})
-
   const controls = h('div', {id: 'controls'})
 
   scroller.appendChild(controls)
@@ -18,27 +27,12 @@ export const route = async (container) => {
 
   const src = window.location.hash.substring(1)
 
-  if (src.length === 43) {
-    window.location.hash = src + '='
-  }
-
-  if (src === await bogbot.pubkey()) {
-    controls.appendChild(await composer())
-  } 
-
-  if (src === 'settings') {
-    scroller.appendChild(settings)
-  } 
-
-  const query = await bogbot.query(src || mykey)
-
-  if (query && query.length) {
-    adder(query, src, scroller)
-  } else {
-    if (src.length === 44) {
-      await gossip(src)
-    } 
-  } 
+  if (src.length === 43) { window.location.hash = src + '=' }
+  if (src === await bogbot.pubkey()) { controls.appendChild(await composer()) } 
+  if (src === '') { await feedRender(await bogbot.query(mykey, src, scroller)) }
+  if (src === 'public') { await feedRender(await bogbot.query(), src, scroller) } 
+  if (src === 'settings') { scroller.appendChild(settings)} 
+  else { await feedRender(await bogbot.query(src), src, scroller)}
 
   window.onhashchange = function () {
     screen.parentNode.removeChild(screen)
