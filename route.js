@@ -28,10 +28,10 @@ export const route = async (container) => {
   const src = window.location.hash.substring(1)
 
   if (src.length === 43) { window.location.hash = src + '=' }
-  if (src === await bogbot.pubkey()) { controls.appendChild(await composer()) } 
-  if (src === '') { await feedRender(await bogbot.query(mykey, src, scroller)) }
-  if (src === 'public') { await feedRender(await bogbot.query(), src, scroller) } 
-  if (src === 'settings') { scroller.appendChild(settings)} 
+  else if (src === await bogbot.pubkey()) { controls.appendChild(await composer()) } 
+  else if (src === '') { await feedRender(await bogbot.query(mykey), src, scroller) }
+  else if (src === 'public') { await feedRender(await bogbot.query(), src, scroller) } 
+  else if (src === 'settings') { scroller.appendChild(settings)} 
   else { await feedRender(await bogbot.query(src), src, scroller)}
 
   window.onhashchange = function () {
