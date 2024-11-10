@@ -3,30 +3,40 @@ import { bogbot } from './bogbot.js'
 import { vb } from './lib/vb.js'
 import { decode } from './lib/base64.js'
 import { gossip } from './trystero.js'
+import { parseYaml} from './yaml.js'
+import { mykey } from './mykey.js'
 
-export const avatar = async (id, msg) => {
+export const loadImage = async (hash) => {
+  const images = document.querySelecterAll('#' + hash)
+  console.log(images)
+}
 
-  const img = vb(decode(id), 256)
-
-  img.classList = 'avatar image' + id
-
-  const name = h('span', {classList: 'name' + id}, [id.substring(0, 7) + '...'])
-
-  if (!msg && id === await bogbot.pubkey()) {
-    const getName = localStorage.getItem('name')
-    if (getName) {name.textContent = getName} 
-    const image = localStorage.getItem('image')
-    if (image) {
-      const blob = await bogbot.find(image)
-      img.src = await bogbot.find(image)
-      if (blob) {
-        img.src = blob
-      } else {
-        await gossip(image)
-      }
+export const currentAvatar = async (pubkey) => {
+  if (pubkey === await bogbot.pubkey()) {
+    const obj = {}
+    if (localStorage.getItem('name')) { obj.name = localStorage.getItem('name')}
+    if (localStorage.getItem('image')) { obj.image = localStorage.getItem('image')}
+    return await avatar(pubkey, obj)
+  }
+  else if (pubkey === mykey) {
+    const ownerLatest = await bogbot.query(pubkey)
+    try {
+      const extracted = await parseYaml(ownerLatest[0].text)
+      return await avatar(pubkey, extracted)
+    } catch (err) {
+      return await avatar(pubkey)
     }
   }
+}
 
+export const avatar = async (id, msg) => {
+  const img = vb(decode(id), 256)
+  img.classList = 'avatar'
+  if (msg && msg.image) {
+    img.id = msg.image
+  }
+
+  const name = h('span', {classList: 'name' + id}, [id.substring(0, 7) + '...'])
   if (msg && msg.name) {
     name.textContent = msg.name
   }

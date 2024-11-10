@@ -2,13 +2,11 @@ import { h } from './lib/h.js'
 import { bogbot } from './bogbot.js'
 import { cachekv } from './lib/cachekv.js'
 import { markdown } from './markdown.js'
-import { avatar } from './avatar.js'
+import { currentAvatar } from './avatar.js'
 import { render } from './render.js'
 import { vb } from './lib/vb.js'
 import { decode } from './lib/base64.js'
 import { blastBlob } from './trystero.js'
-
-const pubkey = await bogbot.pubkey()
 
 export const composer = async (msg) => {
   if (!msg) { msg = {hash: 'home'}}
@@ -31,7 +29,6 @@ export const composer = async (msg) => {
 
   const got = localStorage.getItem(draftId + msg.hash)
   textarea.value = draft
-  
 
   const button = h('button', {
     onclick: async () => {
@@ -73,7 +70,7 @@ export const composer = async (msg) => {
 
   const composeDiv = h('div', {id: 'reply:' + msg.hash, classList: 'message'}, [
     h('p', {style: 'float: right;'}, ['preview']),
-    await avatar(pubkey),
+    await currentAvatar(await bogbot.pubkey()),
     preview,
     textarea,
     h('br'),
