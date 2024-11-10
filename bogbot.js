@@ -52,13 +52,11 @@ bogbot.publish = async (text) => {
     )
   )
 
-  let previous
+  const getLatest = await bogbot.getLatest(pubkey)
 
-  if (localStorage.getItem('previous')) {
-    previous = localStorage.getItem('previous')
-  } else {
-    previous = hash
-  }
+  let previous = hash
+
+  if (getLatest) { previous = getLatest.hash }
 
   const next = msg + previous + hash
 

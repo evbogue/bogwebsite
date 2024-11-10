@@ -14,8 +14,8 @@ export const composer = async (msg) => {
   const textarea = h('textarea', {placeholder: 'Write a message', style: 'width: 98%;'})
 
   const draftId = 'draft:' + msg.hash
-  const draft = localStorage.getItem(draftId || '')
-
+  const draft = localStorage.getItem(draftId)
+  console.log(draftId)
   const preview = h('p', [draft])
 
   textarea.addEventListener('input', async () => {
@@ -55,7 +55,7 @@ export const composer = async (msg) => {
         const rendered = await render(opened)
         textarea.value = ''
         blastBlob(opened.raw)
-        cachekv.rm(draftId)
+        await localStorage.removeItem(draftId)
         preview.textContent = ''
         if (msg && msg.hash != 'home') {
           if (composeDiv) {
