@@ -87,6 +87,11 @@ export const makeRoom = async (pubkey) => {
           const scroller = document.getElementById('scroller')
           scroller.firstChild.after(rendered)
         }
+        if (el && el.childNodes.length == 0) {
+          console.log('WE SHOULD RENDER')
+          const rendered = await render(opened)
+          el.replaceWith(rendered)
+        }
       }
       await bogbot.add(opened.raw)
     } else {

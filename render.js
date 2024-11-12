@@ -21,7 +21,7 @@ const getThreads = async (m, replyDiv) => {
   }
 }
 
-const populate = async (m, msgDiv) => {
+export const populate = async (m, msgDiv) => {
   let pubkey
 
   const content = h('div', {id: m.data})
@@ -40,7 +40,17 @@ const populate = async (m, msgDiv) => {
     await gossip(m.data, m.author)      
   }
 
-  const previous = await bogbot.query(m.previous)
+  if (m.previous != m.hash) {
+    const previous = await bogbot.query(m.previous)
+    //console.log(previous)
+    if (previous && !previous.length) {
+      console.log('WE DO NOT HAVE PREVIOUS')
+      if (!document.getElementById(m.previous)) {
+        msgDiv.after(h('div', {id: m.previous}))
+        gossip(m.previous)
+      }
+    }
+  }
 
   const ts = h('a', {href: '#' + m.hash }, [human(new Date(m.timestamp))])
 
@@ -105,7 +115,7 @@ const populate = async (m, msgDiv) => {
 }
 
 export const render = (m) => {
-  const msgDiv = h('div')
+  const msgDiv = h('div', {id: m.hash})
   populate(m, msgDiv)
   return msgDiv
 }
