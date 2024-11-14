@@ -4,6 +4,7 @@ import { encode } from './lib/base64.js'
 import { render } from './render.js'
 import { markdown } from './markdown.js'
 import { parseYaml } from './yaml.js'
+import { mykey } from './mykey.js'
 
 export const rooms = new Map()
 
@@ -80,7 +81,7 @@ export const makeRoom = async (pubkey) => {
     } catch (err) {}
     if (opened) {
       const src = window.location.hash.substring(1)
-      if (src === '' || src === opened.author || src === opened.hash) {
+      if (src === 'public' || (src === '' && opened.author === mykey)  || src === opened.author || src === opened.hash) {
         const el = document.getElementById(opened.hash)
         if (!el) {
           const rendered = await render(opened)
