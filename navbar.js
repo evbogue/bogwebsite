@@ -17,5 +17,8 @@ export const navbar = h('navbar' , {id: 'navbar'}, [
   search,
   ' ',
   ownerAvatar,
-  "'s Bog"
+  "'s ",
+  h('a', {href: '#'}, ['Bog']), 
+  " | ",
+  h('a', {href: '#public'}, ['Public'])
 ])
