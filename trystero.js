@@ -12,11 +12,11 @@ const queue = new Set()
 
 export const blastBlob = async (blob) => {
   console.log('Sending: ' + blob)
-  for (const room in rooms) {
+  rooms.forEach(room => {
     if (room.sendBlob) {
       room.sendBlob(blob)
     }
-  }
+  })
 }
 
 export const gossip = async (hash, author) => {
@@ -55,7 +55,8 @@ export const makeRoom = async (pubkey) => {
   const [ sendBlob, onBlob ] = room.makeAction('blob')
 
   room.sendHash = sendHash
-  
+  room.sendBlob = sendBlob
+
   onHash(async (hash, id) => {
     try {
       const q = await bogbot.query(hash)
